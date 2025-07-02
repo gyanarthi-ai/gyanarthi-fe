@@ -4,17 +4,28 @@ import { Input } from '@/components/ui/input'
 import React, { useState } from 'react'
 import { LogIn, Mail, Lock } from 'lucide-react';
 import { Label } from '@/components/ui/label';
+import axiosInstance from '@/lib/axios';
+import { useRouter } from 'next/navigation';
+import toast from 'react-hot-toast';
 const LoginPage = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-
+    const router = useRouter()
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
+        try {
 
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1000));
+            await axiosInstance.post(`/auth/login`, {
+                email,
+                password
+            })
+            router.push('/dashboard')
+        } catch (e) {
+            toast('Error Loggin In')
+            console.log(e)
+        }
 
         console.log('Login attempt:', { email, password });
         setIsLoading(false);

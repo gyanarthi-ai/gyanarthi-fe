@@ -7,7 +7,7 @@ const clearBrowserStorage = {
 };
 export { clearBrowserStorage };
 const axiosInstance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_BASE_URL,
+  baseURL: process.env.NEXT_PUBLIC_BE_URL,
   headers: {
     "Content-Type": "application/json",
     Accept: "application/json",
@@ -16,9 +16,6 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(
   (config:any) => {
-    config.headers["Authorization"] = localStorage.getItem("accessToken")
-      ? `Bearer ${localStorage.getItem("accessToken")}`
-      : null;
     return config;
   },
   (error:any) => {

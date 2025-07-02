@@ -4,8 +4,12 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { UserPlus, Mail, Lock, User } from 'lucide-react';
+import toast from 'react-hot-toast';
+import axiosInstance from '@/lib/axios';
+import { useRouter } from 'next/navigation';
 
 const SignupForm = () => {
+    const router = useRouter()
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -17,11 +21,17 @@ const SignupForm = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
-
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
-        console.log('Signup attempt:', formData);
+        if (formData.password !== formData.confirmPassword) {
+            toast('Passwords do not match')
+            return
+        }
+        await axiosInstance.post('/auth/register', {
+            name: formData.name,
+            email: formData.email,
+            password: formData.password
+        })
         setIsLoading(false);
+        router.push('/dashboard')
     };
 
     const handleChange = (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
