@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 47, "column": 0}, "map": {"version":3,"sources":["file:///home/lavizp/Documents/projects/gyanarthi/gyanarthi-fe/src/app/api/evaluate/route.ts"],"sourcesContent":["const API_URL = process.env.BACKEND_URL;\nexport const POST = async (req: Request) => {\n  const body = (await req.json()) as { text: string };\n  const { text } = body;\n  const response = await fetch(`${API_URL}/api/chat/evaluate`, {\n    method: \"POST\",\n    headers: {\n      \"Content-Type\": \"application/json\",\n    },\n    body: JSON.stringify({\n      user_query: text,\n    }),\n  });\n  const data = (await response.json()) as string;\n  return new Response(JSON.stringify(JSON.parse(data)), {\n    headers: {\n      \"Content-Type\": \"application/json\",\n    },\n  });\n};\n"],"names":[],"mappings":";;;AAAA,MAAM,UAAU,QAAQ,GAAG,CAAC,WAAW;AAChC,MAAM,OAAO,OAAO;IACzB,MAAM,OAAQ,MAAM,IAAI,IAAI;IAC5B,MAAM,EAAE,IAAI,EAAE,GAAG;IACjB,MAAM,WAAW,MAAM,MAAM,GAAG,QAAQ,kBAAkB,CAAC,EAAE;QAC3D,QAAQ;QACR,SAAS;YACP,gBAAgB;QAClB;QACA,MAAM,KAAK,SAAS,CAAC;YACnB,YAAY;QACd;IACF;IACA,MAAM,OAAQ,MAAM,SAAS,IAAI;IACjC,OAAO,IAAI,SAAS,KAAK,SAAS,CAAC,KAAK,KAAK,CAAC,QAAQ;QACpD,SAAS;YACP,gBAAgB;QAClB;IACF;AACF"}},
-    {"offset": {"line": 70, "column": 0}, "map": {"version":3,"sources":[],"names":[],"mappings":"A"}}]
-}

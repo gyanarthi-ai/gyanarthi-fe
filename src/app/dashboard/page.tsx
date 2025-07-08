@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
 import { ResearchCard } from "./components/research-card"
 import { NewResearchDialog } from "./components/new-research-dialog"
+import axiosInstance from "@/lib/axios"
 
 // Sample research data
 const initialResearches = [
@@ -63,19 +64,13 @@ export default function Dashboard() {
     const [newResearchOpen, setNewResearchOpen] = useState(false)
     const [researches, setResearches] = useState(initialResearches)
 
-    const handleNewResearch = (data: { name: string; description: string; file: File | null }) => {
-        const newResearch = {
-            id: Math.max(...researches.map((r) => r.id)) + 1,
-            title: data.name,
+    const handleNewResearch = async (data: { name: string; description: string; files: string[] }) => {
+        const response = await axiosInstance.post('/research', {
             description: data.description,
-            date: new Date().toLocaleDateString("en-US", {
-                year: "numeric",
-                month: "short",
-                day: "numeric",
-            }),
-            status: "Draft" as const,
-        }
-        setResearches([newResearch, ...researches])
+            title: data.name,
+            files: data.files
+        })
+        setResearches([response.data.research, ...researches])
     }
 
     const handleOpenResearch = (id: number) => {
