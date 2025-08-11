@@ -1,13 +1,12 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
 import { ResearchCard } from "./components/research-card"
 import { NewResearchDialog } from "./components/new-research-dialog"
 import axiosInstance from "@/lib/axios"
 
-// Sample research data
 const initialResearches = [
     {
         id: 1,
@@ -62,17 +61,24 @@ const initialResearches = [
 
 export default function Dashboard() {
     const [newResearchOpen, setNewResearchOpen] = useState(false)
-    const [researches, setResearches] = useState(initialResearches)
+    const [researches, setResearches] = useState([])
+
+    useEffect(() => {
+        handleGetResearh()
+    }, [])
 
     const handleNewResearch = async (data: { name: string; description: string; files: string[] }) => {
         const response = await axiosInstance.post('/research', {
             description: data.description,
             title: data.name,
-            files: data.files
+            pdf_url: data.files
         })
-        setResearches([response.data.research, ...researches])
+        // setResearches([response.data.research, ...researches])
     }
-
+    const handleGetResearh = async () => {
+        const response = await axiosInstance.get('/research',)
+        setResearches(response.data)
+    }
     const handleOpenResearch = (id: number) => {
         console.log("Opening research:", id)
         // Implement research view logic

@@ -1,58 +1,30 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import {
-    ChevronRight,
+    Copy,
     Goal,
-    MessageSquare,
     Pencil,
+    Send,
     Shield,
-    Star,
-    X,
 } from "lucide-react";
-import { Suggestion, TextFormatter } from "@/components/text-formatter";
+import 'froala-editor/css/froala_style.min.css';
+import 'froala-editor/css/froala_editor.pkgd.min.css';
+import FroalaEditorComponent from 'react-froala-wysiwyg';
+
+import { useResearch } from "@/context/ResearchContext";
 
 export default function WritingAssistant() {
-    const sampleText = `You will find here two examples of proposals for postgraduate research from the Department of Social Policy and Criminology. They both give good indication of the sorts of things that need to be included.`;
-
-    const suggestions = [
-        {
-            id: "1",
-            start: 0,
-            end: 16,
-            type: "fact" as const,
-            message: "This phrase could be more direct",
-            suggestion: "Here are",
-            severity: "info" as const,
-        },
-        {
-            id: "2",
-            start: 108,
-            end: 129,
-            type: "fact" as const,
-            message: "Consider using a more concise phrase",
-            suggestion: "indicate",
-            severity: "warning" as const,
-        },
-        {
-            id: "3",
-            start: 130,
-            end: 180,
-            type: "fact" as const,
-            message: "This statement needs a citation or supporting evidence",
-            severity: "error" as const,
-        },
-    ];
-    const handleSuggestionClick = (suggestion: Suggestion) => {
-        console.log("Suggestion clicked:", suggestion);
-    };
+    const { research, setResearch } = useResearch()
+    if (!research) {
+        return <>Error: Research not found</>
+    }
     return (
         <div className="flex h-screen flex-col">
-            {/* Header */}
             <header className="flex items-center justify-between border-b px-4 py-2">
                 <div className="flex items-center gap-4">
                     <div className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-600">
@@ -68,20 +40,14 @@ export default function WritingAssistant() {
                         </span>
                     </div>
                 </div>
-                <ChevronRight className="h-4 w-4" />
+                <Button size={"sm"}>Save</Button>
             </header>
 
             <div className="flex flex-1 overflow-hidden">
-                {/* Main Content */}
                 <div className="container mx-auto max-w-[800px] my-24">
-                    <TextFormatter
-                        text={sampleText}
-                        suggestions={suggestions}
-                        onSuggestionClick={handleSuggestionClick}
-                    />
+                    <FroalaEditorComponent model={research?.content} onModelChange={(e: string) => setResearch({ ...research, content: e })} />
                 </div>
 
-                {/* Sidebar */}
                 <div className="flex w-[400px] flex-col border-l">
                     <Tabs defaultValue="review" className="flex-1">
                         <TabsList className="h-auto w-full justify-start rounded-none border-b p-0">
@@ -113,29 +79,12 @@ export default function WritingAssistant() {
                                     </div>
                                 </div>
                             </TabsTrigger>
-                            <TabsTrigger
-                                value="check"
-                                className="h-12 flex-1 rounded-none data-[state=active]:bg-muted"
-                            >
-                                <div className="flex items-center gap-2">
-                                    <MessageSquare className="h-4 w-4" />
-                                    <div className="text-left">
-                                        <div>Check for AI</div>
-                                        <div className="text-xs text-muted-foreground">
-                                            text & plagiarism
-                                        </div>
-                                    </div>
-                                </div>
-                            </TabsTrigger>
                         </TabsList>
 
                         <TabsContent value="review" className="flex-1 p-0">
                             <div className="border-b p-4">
                                 <div className="mb-4 flex items-center justify-between">
                                     <h3 className="font-semibold">Review suggestions</h3>
-                                    <span className="rounded bg-zinc-100 px-1.5 py-0.5 text-sm">
-                                        114
-                                    </span>
                                 </div>
                                 <div className="grid gap-3">
                                     <div>
@@ -166,74 +115,39 @@ export default function WritingAssistant() {
                                         </div>
                                         <Progress value={90} className="h-2 bg-violet-100" />
                                     </div>
+                                    <Button size={"sm"}>Review</Button>
                                 </div>
                             </div>
-
-                            <ScrollArea className="flex-1">
-                                <div className="space-y-4 p-4">
-                                    <div className="flex items-center gap-2 text-sm font-medium">
-                                        <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
-                                        Pro suggestions
-                                        <span className="rounded bg-zinc-100 px-1.5 py-0.5 text-xs">
-                                            114
-                                        </span>
-                                    </div>
-
-                                    <Card>
-                                        <CardContent className="space-y-3 p-4">
-                                            <div className="flex items-start justify-between gap-2">
-                                                <div className="flex items-start gap-2">
-                                                    <div className="flex h-5 w-5 items-center justify-center rounded-full bg-blue-100">
-                                                        <Pencil className="h-3 w-3 text-blue-500" />
-                                                    </div>
-                                                    <div>
-                                                        <div className="text-sm font-medium">
-                                                            Clarity · Change the wording
-                                                        </div>
-                                                        <div className="text-sm text-muted-foreground line-through">
-                                                            You will find here
-                                                        </div>
-                                                        <div className="text-sm">Here are</div>
-                                                    </div>
-                                                </div>
-                                                <Button variant="ghost" size="icon" className="h-6 w-6">
-                                                    <X className="h-4 w-4" />
-                                                </Button>
-                                            </div>
-                                            <Button className="w-full" variant="outline" size="sm">
-                                                Accept
-                                            </Button>
-                                        </CardContent>
-                                    </Card>
-
-                                    <Card>
-                                        <CardContent className="space-y-3 p-4">
-                                            <div className="flex items-start justify-between gap-2">
-                                                <div className="flex items-start gap-2">
-                                                    <div className="flex h-5 w-5 items-center justify-center rounded-full bg-red-100">
-                                                        <Pencil className="h-3 w-3 text-red-500" />
-                                                    </div>
-                                                    <div>
-                                                        <div className="text-sm font-medium">
-                                                            Grammar · Remove phrase
-                                                        </div>
-                                                        <div className="text-sm text-muted-foreground line-through">
-                                                            give good indication of
-                                                        </div>
-                                                        <div className="text-sm">indicate</div>
-                                                    </div>
-                                                </div>
-                                                <Button variant="ghost" size="icon" className="h-6 w-6">
-                                                    <X className="h-4 w-4" />
-                                                </Button>
-                                            </div>
-                                            <Button className="w-full" variant="outline" size="sm">
-                                                Accept
-                                            </Button>
-                                        </CardContent>
-                                    </Card>
+                        </TabsContent>
+                        <TabsContent value="write" className="flex-1 p-0">
+                            <div className="border-b p-4 flex flex-col gap-5">
+                                <div className=" flex items-center justify-between">
+                                    <h3 className="font-semibold">Generate With AI</h3>
                                 </div>
-                            </ScrollArea>
+                                <div className="flex flex-col">
+                                    <div className="flex justify-between items-center">
+                                        Generated Article:
+                                        <Button variant={"ghost"} className="p-1">
+                                            <Copy className="h-4 cursor-pointer" />
+                                        </Button>
+                                    </div>
+                                    <p>
+                                        asdasd
+                                        asd
+                                        asda
+                                        sdasd
+                                    </p>
+                                </div>
+                                <div className="flex items-center gap-2 w-full">
+                                    <div className="w-full">
+                                        <Label>Enter Prompt:</Label>
+                                        <Input placeholder="Enter a small conclusion paragraph" />
+                                    </div>
+                                    <Button variant={"ghost"} className="mt-4">
+                                        <Send />
+                                    </Button>
+                                </div>
+                            </div>
                         </TabsContent>
                     </Tabs>
                 </div>

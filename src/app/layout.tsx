@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { ThemeProvider } from '@/components/theme-provider';
 import { Toaster } from 'react-hot-toast'
+import { ResearchProvider } from '@/context/ResearchContext';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
@@ -20,7 +21,9 @@ export default function RootLayout({
       <body className={inter.className}>
         <Toaster />
         <ThemeProvider attribute="class" defaultTheme="light">
-          {children}
+          <ResearchProvider>
+            {children}
+          </ResearchProvider>
         </ThemeProvider>
       </body>
     </html>

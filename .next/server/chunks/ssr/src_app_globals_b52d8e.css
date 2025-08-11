@@ -656,6 +656,10 @@ body {
   margin-top: 10rem;
 }
 
+.mt-4 {
+  margin-top: 1rem;
+}
+
 .line-clamp-2 {
   overflow: hidden;
   display: -webkit-box;
@@ -1098,6 +1102,10 @@ body {
 
 .gap-6 {
   gap: 1.5rem;
+}
+
+.gap-5 {
+  gap: 1.25rem;
 }
 
 .-space-x-2 > :not([hidden]) ~ :not([hidden]) {

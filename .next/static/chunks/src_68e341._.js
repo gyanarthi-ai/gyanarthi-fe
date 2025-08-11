@@ -99,7 +99,8 @@ const axiosInstance = __TURBOPACK__imported__module__$5b$project$5d2f$node_modul
     headers: {
         "Content-Type": "application/json",
         Accept: "application/json"
-    }
+    },
+    withCredentials: true
 });
 axiosInstance.interceptors.request.use((config)=>{
     return config;
