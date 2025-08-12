@@ -11,7 +11,6 @@ export interface AIFeedback {
 
 export interface Research {
     id?: string;
-    research_id?: string;
     title: string;
     content: string;
     ai_feedback?: AIFeedback;
@@ -23,6 +22,7 @@ interface ResearchContextType {
     updateResearch: (updates: Partial<Research>) => void;
     saveResearch: () => Promise<void>;
     reviewResearch: () => Promise<void>;
+    getResearchById: (id: string) => Promise<void>;
 }
 
 const ResearchContext = createContext<ResearchContextType | undefined>(undefined);
@@ -34,8 +34,9 @@ export const ResearchProvider = ({ children }: { children: ReactNode }) => {
     };
     const getResearchById = async (id: string) => {
         try {
-            const res = await axiosInstance.get("")
-            setResearch(res.data)
+            const res = await axiosInstance.get(`/research/written_article/${id}`)
+            console.log(res.data)
+            setResearch({ id: res.data.id, content: res.data.content, title: res.data.title })
         } catch (e) {
             console.log(e)
         }
@@ -43,14 +44,11 @@ export const ResearchProvider = ({ children }: { children: ReactNode }) => {
     const saveResearch = async () => {
         if (!research) return;
         try {
-            const res = await fetch("/api/research/save", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(research),
-            });
-            if (!res.ok) throw new Error("Failed to save research");
-            const data = await res.json();
-            setResearch(data);
+            await axiosInstance.put(`/research/written_article/${research.id}`, {
+                title: research.title,
+                content: research.content
+            })
+            // setResearch(res.data);
         } catch (err) {
             console.error(err);
         }
@@ -74,7 +72,7 @@ export const ResearchProvider = ({ children }: { children: ReactNode }) => {
 
     return (
         <ResearchContext.Provider
-            value={{ research, setResearch, updateResearch, saveResearch, reviewResearch }}
+            value={{ research, setResearch, updateResearch, saveResearch, reviewResearch, getResearchById }}
         >
             {children}
         </ResearchContext.Provider>

@@ -15,11 +15,20 @@ import {
 import 'froala-editor/css/froala_style.min.css';
 import 'froala-editor/css/froala_editor.pkgd.min.css';
 import FroalaEditorComponent from 'react-froala-wysiwyg';
-
+import { useParams } from "next/navigation";
 import { useResearch } from "@/context/ResearchContext";
+import { useEffect } from "react";
 
 export default function WritingAssistant() {
-    const { research, setResearch } = useResearch()
+    const { research, setResearch, getResearchById, saveResearch } = useResearch()
+    const params = useParams();
+    const researchId = params.researchId as string;
+
+    useEffect(() => {
+        if (!researchId) return;
+        console.log(researchId)
+        getResearchById(researchId)
+    }, [researchId])
     if (!research) {
         return <>Error: Research not found</>
     }
@@ -40,7 +49,7 @@ export default function WritingAssistant() {
                         </span>
                     </div>
                 </div>
-                <Button size={"sm"}>Save</Button>
+                <Button size={"sm"} onClick={saveResearch}>Save</Button>
             </header>
 
             <div className="flex flex-1 overflow-hidden">
