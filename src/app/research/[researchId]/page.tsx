@@ -16,19 +16,27 @@ import 'froala-editor/css/froala_style.min.css';
 import 'froala-editor/css/froala_editor.pkgd.min.css';
 import FroalaEditorComponent from 'react-froala-wysiwyg';
 import { useParams } from "next/navigation";
-import { useResearch } from "@/context/ResearchContext";
-import { useEffect } from "react";
+import { LoadingStates, useResearch } from "@/context/ResearchContext";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 export default function WritingAssistant() {
-    const { research, setResearch, getResearchById, saveResearch } = useResearch()
+    const { research, setResearch, getResearchById, saveResearch, reviewResearch, generateParagraph, loadingStates } = useResearch()
     const params = useParams();
     const researchId = params.researchId as string;
-
+    const [queryInput, setQueryInput] = useState("")
+    const [generatedParagpaphh, setGeneratedParagraph] = useState("")
     useEffect(() => {
         if (!researchId) return;
         console.log(researchId)
         getResearchById(researchId)
     }, [researchId])
+
+    const generateParagraphButton = async () => {
+        const value = await generateParagraph(queryInput)
+        setGeneratedParagraph(value)
+    }
+
     if (!research) {
         return <>Error: Research not found</>
     }
@@ -39,7 +47,7 @@ export default function WritingAssistant() {
                     <div className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-600">
                         <Shield className="h-4 w-4 text-white" />
                     </div>
-                    <h1 className="font-medium">sample-research-proposal</h1>
+                    <h1 className="font-medium">{research.title}</h1>
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                         <Goal className="h-4 w-4" />
                         Goals
@@ -49,7 +57,7 @@ export default function WritingAssistant() {
                         </span>
                     </div>
                 </div>
-                <Button size={"sm"} onClick={saveResearch}>Save</Button>
+                <Button size={"sm"} onClick={saveResearch} disabled={loadingStates[LoadingStates.SAVE]}>Save</Button>
             </header>
 
             <div className="flex flex-1 overflow-hidden">
@@ -98,33 +106,26 @@ export default function WritingAssistant() {
                                 <div className="grid gap-3">
                                     <div>
                                         <div className="mb-1 flex items-center justify-between text-sm">
-                                            <span>Correctness</span>
-                                            <span>3/10</span>
-                                        </div>
-                                        <Progress value={30} className="h-2 bg-red-100" />
-                                    </div>
-                                    <div>
-                                        <div className="mb-1 flex items-center justify-between text-sm">
                                             <span>Clarity</span>
-                                            <span>7/10</span>
+                                            <span>{research.ai_feedback ? research.ai_feedback.clarity_score * 10 : 0}/10</span>
                                         </div>
                                         <Progress value={70} className="h-2 bg-blue-100" />
                                     </div>
                                     <div>
                                         <div className="mb-1 flex items-center justify-between text-sm">
-                                            <span>Engagement</span>
-                                            <span>8/10</span>
+                                            <span>Factual Correctness</span>
+                                            <span>{research.ai_feedback ? research.ai_feedback.factual_correctness * 10 : 0}/10</span>
                                         </div>
                                         <Progress value={80} className="h-2 bg-emerald-100" />
                                     </div>
                                     <div>
                                         <div className="mb-1 flex items-center justify-between text-sm">
-                                            <span>Delivery</span>
-                                            <span>9/10</span>
+                                            <span>Grammar Score</span>
+                                            <span>{research.ai_feedback ? research.ai_feedback.grammar_score * 10 : 0}/10</span>
                                         </div>
                                         <Progress value={90} className="h-2 bg-violet-100" />
                                     </div>
-                                    <Button size={"sm"}>Review</Button>
+                                    <Button size={"sm"} onClick={reviewResearch} disabled={loadingStates[LoadingStates.REVIEW]}>Review</Button>
                                 </div>
                             </div>
                         </TabsContent>
@@ -136,23 +137,23 @@ export default function WritingAssistant() {
                                 <div className="flex flex-col">
                                     <div className="flex justify-between items-center">
                                         Generated Article:
-                                        <Button variant={"ghost"} className="p-1">
+                                        <Button variant={"ghost"} className="p-1" onClick={() => {
+                                            window.navigator.clipboard.writeText(generatedParagpaphh)
+                                            toast('Text Copied')
+                                        }}>
                                             <Copy className="h-4 cursor-pointer" />
                                         </Button>
                                     </div>
                                     <p>
-                                        asdasd
-                                        asd
-                                        asda
-                                        sdasd
+                                        {generatedParagpaphh}
                                     </p>
                                 </div>
                                 <div className="flex items-center gap-2 w-full">
                                     <div className="w-full">
                                         <Label>Enter Prompt:</Label>
-                                        <Input placeholder="Enter a small conclusion paragraph" />
+                                        <Input placeholder="Enter a small conclusion paragraph" value={queryInput} onChange={e => setQueryInput(e.target.value)} />
                                     </div>
-                                    <Button variant={"ghost"} className="mt-4">
+                                    <Button variant={"ghost"} className="mt-4" onClick={() => generateParagraphButton()}>
                                         <Send />
                                     </Button>
                                 </div>

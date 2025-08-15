@@ -3,10 +3,10 @@ import axiosInstance from "@/lib/axios";
 import React, { createContext, useContext, useState, ReactNode } from "react";
 
 export interface AIFeedback {
-    grammar_score?: number;
-    clarity_score?: number;
-    factual_correctness?: number;
-    suggestions?: string;
+    grammar_score: number;
+    clarity_score: number;
+    factual_correctness: number;
+    suggestions: string;
 }
 
 export interface Research {
@@ -15,7 +15,12 @@ export interface Research {
     content: string;
     ai_feedback?: AIFeedback;
 }
+export enum LoadingStates {
+    SAVE = 'save',
+    REVIEW = 'review'
+}
 
+type ILoadingState = Record<LoadingStates, boolean>
 interface ResearchContextType {
     research: Research | null;
     setResearch: (research: Research | null) => void;
@@ -23,12 +28,18 @@ interface ResearchContextType {
     saveResearch: () => Promise<void>;
     reviewResearch: () => Promise<void>;
     getResearchById: (id: string) => Promise<void>;
+    generateParagraph: (query: string) => Promise<string>
+    loadingStates: ILoadingState
 }
 
 const ResearchContext = createContext<ResearchContextType | undefined>(undefined);
 
 export const ResearchProvider = ({ children }: { children: ReactNode }) => {
     const [research, setResearch] = useState<Research | null>(null);
+    const [loadingStates, setLoadingStates] = useState<ILoadingState>({
+        [LoadingStates.SAVE]: false,
+        [LoadingStates.REVIEW]: false
+    });
     const updateResearch = (updates: Partial<Research>) => {
         setResearch((prev) => (prev ? { ...prev, ...updates } : { ...updates } as Research));
     };
@@ -36,12 +47,16 @@ export const ResearchProvider = ({ children }: { children: ReactNode }) => {
         try {
             const res = await axiosInstance.get(`/research/written_article/${id}`)
             console.log(res.data)
-            setResearch({ id: res.data.id, content: res.data.content, title: res.data.title })
+            setResearch({ id: res.data.research_id, content: res.data.content, title: res.data.title, ai_feedback: res.data.ai_feedback })
         } catch (e) {
             console.log(e)
         }
     }
     const saveResearch = async () => {
+        setLoadingStates(prev => ({
+            ...prev,
+            [LoadingStates.SAVE]: true
+        }));
         if (!research) return;
         try {
             await axiosInstance.put(`/research/written_article/${research.id}`, {
@@ -51,28 +66,50 @@ export const ResearchProvider = ({ children }: { children: ReactNode }) => {
             // setResearch(res.data);
         } catch (err) {
             console.error(err);
+        } finally {
+            setLoadingStates(prev => ({
+                ...prev,
+                [LoadingStates.SAVE]: false
+            }));
         }
     };
 
     const reviewResearch = async () => {
+        setLoadingStates(prev => ({
+            ...prev,
+            [LoadingStates.REVIEW]: true
+        }));
         if (!research) return;
         try {
-            const res = await fetch("/api/research/review", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ content: research.content }),
-            });
-            if (!res.ok) throw new Error("Failed to get AI feedback");
-            const feedback: AIFeedback = await res.json();
-            updateResearch({ ai_feedback: feedback });
+            const res = await axiosInstance.post(`/research/written_article/${research.id}/review`, {
+                title: research.title,
+                content: research.content
+            })
+            updateResearch({ ai_feedback: res.data.ai_feedback });
         } catch (err) {
             console.error(err);
+        } finally {
+            setLoadingStates(prev => ({
+                ...prev,
+                [LoadingStates.REVIEW]: false
+            }));
         }
-    };
-
+    }
+    const generateParagraph = async (query: string) => {
+        if (!research) return;
+        try {
+            const res = await axiosInstance.post(`research/generate`, {
+                research_id: research.id,
+                query: query
+            })
+            return res.data
+        } catch (e) {
+            console.error(e)
+        }
+    }
     return (
         <ResearchContext.Provider
-            value={{ research, setResearch, updateResearch, saveResearch, reviewResearch, getResearchById }}
+            value={{ research, setResearch, updateResearch, saveResearch, reviewResearch, getResearchById, generateParagraph, loadingStates }}
         >
             {children}
         </ResearchContext.Provider>
