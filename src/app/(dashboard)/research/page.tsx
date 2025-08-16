@@ -3,9 +3,9 @@
 import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
+import axiosInstance from "@/lib/axios"
 import { ResearchCard } from "./components/research-card"
 import { NewResearchDialog } from "./components/new-research-dialog"
-import axiosInstance from "@/lib/axios"
 
 const initialResearches = [
     {
@@ -76,7 +76,7 @@ export default function Dashboard() {
         // setResearches([response.data.research, ...researches])
     }
     const handleGetResearh = async () => {
-        const response = await axiosInstance.get('/research',)
+        const response = await axiosInstance.get('/research')
         setResearches(response.data)
     }
     const handleOpenResearch = (id: number) => {
