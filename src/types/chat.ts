@@ -17,13 +17,14 @@ export interface Citation {
 export interface Message {
   id: string;
   content: string;
-  isBot: boolean;
-  citations?: Citation[];
+  role:'user'|'assistant';
   timestamp: number;
-  selectedCitationId?: string;  // For follow-up questions
-  verificationResult?: {
-    factualAccuracy: string;
-    groundTruth: string;
-    confidenceScore: number;
-  };
+
+}
+
+export interface MessageShorthand{
+  id:string,
+  title: string,
+  updated_at: string
+
 }

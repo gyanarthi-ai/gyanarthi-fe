@@ -6,10 +6,9 @@ import { useEffect, useRef } from "react";
 
 interface ChatViewProps {
   messages: Message[];
-  handleCitationFollowUp: (citationId: string) => void;
 }
 
-export function ChatView({ messages, handleCitationFollowUp }: ChatViewProps) {
+export function ChatView({ messages }: ChatViewProps) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -25,14 +24,13 @@ export function ChatView({ messages, handleCitationFollowUp }: ChatViewProps) {
   return (
     <>
       <ScrollArea className="h-full flex-1 overflow-scroll">
-      <div className="flex-1 py-5 overflow-hidden shadow-md font-bold text-center text-2xl">
-        Chat Mode
-      </div>
+        <div className="flex-1 py-5 overflow-hidden shadow-md font-bold text-center text-2xl">
+          Chat Mode
+        </div>
         {messages.map((message) => (
           <ChatMessage
             key={message.id}
             message={message}
-            handleCitationFollowUp={handleCitationFollowUp}
           />
         ))}
         <div ref={messagesEndRef} />

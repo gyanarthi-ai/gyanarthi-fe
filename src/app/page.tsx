@@ -31,7 +31,7 @@ const HomePage = () => {
               <p className="text-lg text-gray-300 max-w-2xl mx-auto">
                 Unleash the power of our very own validated AI data to get the most accurate and reliable information.
               </p>
-              <Link href={'#features'} >
+              <Link href={'/auth/login'} >
                 <Button size="lg" className="bg-white text-black hover:bg-white/90">
                   GET STARTED
                 </Button>

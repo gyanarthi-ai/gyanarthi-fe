@@ -22,7 +22,7 @@ export function CitationCard({ citation, onAskFollowUp }: CitationCardProps) {
           <p className="text-sm text-muted-foreground mt-1">
             {citation.authors.join(", ")} • {citation.year} • {citation.journal}
           </p>
-          
+
           {score && (
             <div className="flex gap-2 mt-2">
               <Badge variant="secondary">
@@ -36,7 +36,7 @@ export function CitationCard({ citation, onAskFollowUp }: CitationCardProps) {
               </Badge>
             </div>
           )}
-          
+
           <div className="flex gap-2 mt-3">
             <Button
               variant="outline"

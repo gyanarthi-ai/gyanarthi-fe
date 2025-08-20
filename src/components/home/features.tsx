@@ -23,7 +23,7 @@ const Features = () => {
                             <p className="text-gray-400 text-sm leading-relaxed">
                                 Validated Chatbot
                             </p>
-                            <Link href="/chat">
+                            <Link href="/auth/login">
                                 <Button variant="ghost" className="group text-purple-400 hover:text-purple-300">
                                     EXPLORE MORE
                                     <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
@@ -32,7 +32,6 @@ const Features = () => {
                         </div>
                     </div>
 
-                    {/* Improve Everyday Card */}
                     <div className="relative p-6 rounded-3xl bg-gradient-to-b from-[#1C1B21] to-[#131215] border border-yellow-500/20">
                         <div className="absolute -top-1 -bottom-1 -left-1 -right-1 rounded-3xl bg-gradient-to-r from-yellow-500/20 to-transparent -z-10" />
                         <div className="space-y-4">
@@ -43,7 +42,7 @@ const Features = () => {
                             <p className="text-gray-400 text-sm leading-relaxed">
                                 Paste your responses and get validated information.
                             </p>
-                            <Link href={'/paste-content'}>
+                            <Link href={'/auth/login'}>
                                 <Button variant="ghost" className="group text-yellow-400 hover:text-yellow-300">
                                     EXPLORE MORE
                                     <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
@@ -52,7 +51,6 @@ const Features = () => {
                         </div>
                     </div>
 
-                    {/* Connect Everywhere Card */}
                     <div className="relative p-6 rounded-3xl bg-gradient-to-b from-[#1C1B21] to-[#131215] border border-green-500/20">
                         <div className="absolute -top-1 -bottom-1 -left-1 -right-1 rounded-3xl bg-gradient-to-r from-green-500/20 to-transparent -z-10" />
                         <div className="space-y-4">
@@ -63,10 +61,13 @@ const Features = () => {
                             <p className="text-gray-400 text-sm leading-relaxed">
                                 Your assistant to get the most accurate and reliable information.
                             </p>
-                            <Button variant="ghost" className="group text-green-400 hover:text-green-300">
-                                EXPLORE MORE
-                                <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
-                            </Button>
+
+                            <Link href={'/auth/login'}>
+                                <Button variant="ghost" className="group text-green-400 hover:text-green-300">
+                                    EXPLORE MORE
+                                    <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
+                                </Button>
+                            </Link>
                         </div>
                     </div>
                 </div>

@@ -1,4 +1,5 @@
 import { Sidebar } from '@/components/sidebar';
+import { ChatProvider } from '@/context/ChatContext';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -12,11 +13,13 @@ export default function DashboardLayout({
     children: React.ReactNode;
 }) {
     return (
-        <div className="flex gap-0 max-w-full h-screen">
-            <Sidebar />
-            <div className='flex-1'>
-                {children}
+        <ChatProvider>
+            <div className="flex gap-0 max-w-full h-screen">
+                <Sidebar />
+                <div className='flex-1'>
+                    {children}
+                </div>
             </div>
-        </div>
+        </ChatProvider>
     );
 }

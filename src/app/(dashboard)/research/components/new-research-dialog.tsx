@@ -21,20 +21,20 @@ import axiosInstance from "@/lib/axios"
 interface NewResearchDialogProps {
     open: boolean
     onOpenChange: (open: boolean) => void
-    onSubmit: (data: { name: string; description: string; files: string[] }) => void
+    onSubmit: (data: { name: string; description: string; file: string }) => void
 }
 
 export function NewResearchDialog({ open, onOpenChange, onSubmit }: NewResearchDialogProps) {
     const [name, setName] = useState("")
     const [description, setDescription] = useState("")
-    const [files, setFiles] = useState<string[]>([])
+    const [file, setFile] = useState<string>("")
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
-        onSubmit({ name, description, files })
+        onSubmit({ name, description, file })
         setName("")
         setDescription("")
-        setFiles([])
+        setFile("")
         onOpenChange(false)
     }
 
@@ -49,7 +49,7 @@ export function NewResearchDialog({ open, onOpenChange, onSubmit }: NewResearchD
             }
         }
         )
-        setFiles(val => [...val, response.data.url])
+        setFile(response.data.url)
     }
 
     return (

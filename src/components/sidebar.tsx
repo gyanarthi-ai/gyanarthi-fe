@@ -1,7 +1,7 @@
 "use client"
 
-import { useState } from "react"
-import { usePathname } from "next/navigation"
+import { useEffect, useState } from "react"
+import { usePathname, useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import {
@@ -19,6 +19,8 @@ import {
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
+import { useChat } from "@/context/ChatContext"
+import { MessageShorthand } from "@/types/chat"
 
 interface SidebarProps {
   className?: string
@@ -26,26 +28,25 @@ interface SidebarProps {
 
 export function Sidebar({ className }: SidebarProps) {
   const [isCollapsed, setIsCollapsed] = useState(false)
+  const [chatHistory, setChatHistory] = useState<MessageShorthand[]>([])
   const [isOpen, setIsOpen] = useState(false)
   const [showDropdown, setShowDropdown] = useState(false)
   const pathname = usePathname()
-
+  const router = useRouter()
+  const { fetchMessages } = useChat()
   const menuItems = [
     { icon: Home, label: "+ New Chat", href: "/chat" },
     { icon: Briefcase, label: "Research", href: "/research" },
-    { icon: Users, label: "Candidates", href: "/candidates", badge: "New" },
-    { icon: BarChart3, label: "Reports", href: "/reports" },
-    { icon: Settings, label: "Settings", href: "/settings" },
   ]
 
-  const chatHistory = [
-    { id: 1, title: "Project Planning Discussion", time: "2 hours ago" },
-    { id: 2, title: "Design Review", time: "Yesterday" },
-    { id: 3, title: "Bug Report Analysis", time: "2 days ago" },
-    { id: 4, title: "Team Standup Notes", time: "3 days ago" },
-    { id: 5, title: "Client Feedback", time: "1 week ago" },
-  ]
+  useEffect(() => {
+    const fetchSidebarMessages = async () => {
+      const data = await fetchMessages()
+      setChatHistory(data)
 
+    }
+    fetchSidebarMessages()
+  }, [])
   return (
     <>
       <Button variant="ghost" size="icon" className="fixed top-4 left-4 z-50 md:hidden" onClick={() => setIsOpen(true)}>
@@ -126,17 +127,12 @@ export function Sidebar({ className }: SidebarProps) {
               >
                 <item.icon className="h-4 w-4 mr-3 transition-transform duration-200 group-hover:scale-110" />
                 <span className="flex-1 text-left">{item.label}</span>
-                {item.badge && (
-                  <Badge variant="secondary" className="ml-auto text-xs bg-green-100 text-green-700 hover:bg-green-100">
-                    {item.badge}
-                  </Badge>
-                )}
               </Button>
             </Link>
           ))}
         </nav>
 
-        {pathname === "/chat" && (
+        {pathname.includes('/chat') && (
           <div className="flex-1 flex flex-col min-h-0 border-t border-gray-100">
             <div className="p-4 pb-2">
               <div className="flex items-center gap-2 mb-3">
@@ -159,15 +155,14 @@ export function Sidebar({ className }: SidebarProps) {
                     animationFillMode: "both",
                   }}
                   onClick={() => {
-                    console.log(`[v0] Chat clicked: ${chat.title}`)
-                    // Handle chat selection logic here
+                    router.push(`/chat/${chat.id}`)
                   }}
                 >
                   <div className="flex flex-col gap-1 min-w-0 flex-1">
                     <div className="font-medium text-sm text-gray-900 truncate group-hover:text-gray-700">
                       {chat.title}
                     </div>
-                    <div className="text-xs text-gray-400">{chat.time}</div>
+                    <div className="text-xs text-gray-400">{chat.updated_at}</div>
                   </div>
                 </Button>
               ))}
