@@ -1,15 +1,8 @@
-"use client"
-
 import { useEffect, useState } from "react"
-import { usePathname, useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
 import {
   Home,
   Briefcase,
-  Users,
-  BarChart3,
-  Settings,
   ChevronUp,
   ChevronDown,
   Hash,
@@ -18,27 +11,25 @@ import {
   MessageCircle,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
-import Link from "next/link"
-import { useChat } from "@/context/ChatContext"
+import { Link, useRouter, useRouterState } from "@tanstack/react-router"
 import { MessageShorthand } from "@/types/chat"
+import { useChat } from "@/context/ChatContext"
 
 interface SidebarProps {
   className?: string
 }
 
 export function Sidebar({ className }: SidebarProps) {
-  const [isCollapsed, setIsCollapsed] = useState(false)
   const [chatHistory, setChatHistory] = useState<MessageShorthand[]>([])
   const [isOpen, setIsOpen] = useState(false)
   const [showDropdown, setShowDropdown] = useState(false)
-  const pathname = usePathname()
   const router = useRouter()
   const { fetchMessages } = useChat()
   const menuItems = [
     { icon: Home, label: "+ New Chat", href: "/chat" },
     { icon: Briefcase, label: "Research", href: "/research" },
   ]
-
+  const { location } = useRouterState()
   useEffect(() => {
     const fetchSidebarMessages = async () => {
       const data = await fetchMessages()
@@ -110,7 +101,7 @@ export function Sidebar({ className }: SidebarProps) {
 
         <nav className="p-4 space-y-1">
           {menuItems.map((item, index) => (
-            <Link key={item.href} href={item.href}>
+            <Link key={item.href} to={item.href}>
               <Button
                 key={item.href}
                 variant="ghost"
@@ -132,7 +123,7 @@ export function Sidebar({ className }: SidebarProps) {
           ))}
         </nav>
 
-        {pathname.includes('/chat') && (
+        {location.pathname.includes('/chat') && (
           <div className="flex-1 flex flex-col min-h-0 border-t border-gray-100">
             <div className="p-4 pb-2">
               <div className="flex items-center gap-2 mb-3">
@@ -155,7 +146,7 @@ export function Sidebar({ className }: SidebarProps) {
                     animationFillMode: "both",
                   }}
                   onClick={() => {
-                    router.push(`/chat/${chat.id}`)
+                    router.navigate({to:`/chat/${chat.id}`})
                   }}
                 >
                   <div className="flex flex-col gap-1 min-w-0 flex-1">

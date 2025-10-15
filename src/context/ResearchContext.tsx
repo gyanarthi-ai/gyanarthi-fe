@@ -1,6 +1,6 @@
 "use client";
 import axiosInstance from "@/lib/axios";
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useContext, useState, ReactNode } from "react";
 
 export interface AIFeedback {
     grammar_score: number;

@@ -1,7 +1,6 @@
-import React from 'react'
+import { Link } from '@tanstack/react-router'
 import { Button } from '../ui/button'
 import { ArrowRight, MessageSquare, Zap, Globe } from 'lucide-react'
-import Link from 'next/link'
 const Features = () => {
     return (
         <div className="py-16 bg-[#0B0A0F] text-white" id='features'>
@@ -23,7 +22,7 @@ const Features = () => {
                             <p className="text-gray-400 text-sm leading-relaxed">
                                 Validated Chatbot
                             </p>
-                            <Link href="/auth/login">
+                            <Link to="/">
                                 <Button variant="ghost" className="group text-purple-400 hover:text-purple-300">
                                     EXPLORE MORE
                                     <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
@@ -42,7 +41,7 @@ const Features = () => {
                             <p className="text-gray-400 text-sm leading-relaxed">
                                 Paste your responses and get validated information.
                             </p>
-                            <Link href={'/auth/login'}>
+                            <Link to="/">
                                 <Button variant="ghost" className="group text-yellow-400 hover:text-yellow-300">
                                     EXPLORE MORE
                                     <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
@@ -62,7 +61,7 @@ const Features = () => {
                                 Your assistant to get the most accurate and reliable information.
                             </p>
 
-                            <Link href={'/auth/login'}>
+                            <Link to="/">
                                 <Button variant="ghost" className="group text-green-400 hover:text-green-300">
                                     EXPLORE MORE
                                     <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />

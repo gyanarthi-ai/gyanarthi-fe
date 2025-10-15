@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import Image from "next/image";
 import { collabApps } from "@/constants";
 import { Check } from "lucide-react";
 import logo from "../../assets/logo.png"
@@ -55,7 +54,7 @@ const Collaboration = () => {
             {/* Center Brain Icon */}
             <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 rounded-2xl bg-gradient-to-r from-purple-500 to-blue-500 flex items-center justify-center">
               <div className="w-10 h-10 text-white absolute">
-                <Image src={logo} alt="logo" fill />
+                <img src={logo} alt="logo"  />
               </div>
             </div>
 
@@ -74,7 +73,7 @@ const Collaboration = () => {
                     transform: 'translate(-50%, -50%)'
                   }}
                 >
-                  <Image src={_.icon} alt="" height={700} width={700} />
+                  <img src={_.icon} alt="" height={700} width={700} />
                 </div>
               ))}
             </div>
