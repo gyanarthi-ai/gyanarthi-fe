@@ -14,45 +14,61 @@ export function ChatMessage({
   const { role, content } = message;
 
   return (
-    <div className={cn("flex gap-3 p-4", role == 'user' && "bg-muted/50")}>
-      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10">
-        {role == 'assistant' ? <Bot className="h-5 w-5" /> : <User className="h-5 w-5" />}
-      </div>
-      <div className="flex-1 space-y-4">
-        <div className="prose prose-sm max-w-none">
-          <ReactMarkdown
-            components={{
-              a: ({ node, children, ...props }) => (
-                <a
-                  {...props}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`${role == 'user'
-                    ? "text-blue-100 hover:text-white underline"
-                    : "text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 underline"
-                    } transition-colors`}
-                >
-                  {children}
-                </a>
-              ),
-              p: ({ children }) => <p className="mb-2 last:mb-0 leading-relaxed">{children}</p>,
-              code: ({ children }) => (
-                <code
-                  className={`px-1.5 py-0.5 rounded text-sm font-mono ${role == 'user'
-                    ? "bg-blue-600/50 text-blue-100"
-                    : "bg-muted text-muted-foreground dark:bg-gray-700 dark:text-gray-300"
-                    }`}
-                >
-                  {children}
-                </code>
-              ),
-            }}
-          >
-            {content}
-          </ReactMarkdown>
-          {/* <p className="text-sm leading-relaxed">{content}</p> */}
-        </div>
-      </div>
+    <div className={cn(
+  "flex gap-3 py-4 px-6",
+  role == 'user' && "flex-row-reverse"
+)}>
+  <div className="flex-shrink-0">
+    <div className={cn(
+      "flex h-8 w-8 items-center justify-center rounded-full",
+      role == 'assistant' 
+        ? "bg-gray-100 dark:bg-gray-800" 
+        : "bg-blue-500"
+    )}>
+      {role == 'assistant' ? (
+        <Bot className="h-4 w-4 text-gray-700 dark:text-gray-300" />
+      ) : (
+        <User className="h-4 w-4 text-white" />
+      )}
     </div>
+  </div>
+  
+  <div className={cn(
+    "flex-1 max-w-3xl",
+    role == 'user' && "flex justify-end"
+  )}>
+    <div className={cn(
+      "prose prose-sm dark:prose-invert",
+      role == 'user' && "text-right"
+    )}>
+      <ReactMarkdown
+        components={{
+          a: ({ node, children, ...props }) => (
+            <a
+              {...props}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 hover:text-blue-700 dark:text-blue-400 underline"
+            >
+              {children}
+            </a>
+          ),
+          p: ({ children }) => (
+            <p className="mb-2 last:mb-0 leading-relaxed">
+              {children}
+            </p>
+          ),
+          code: ({ children }) => (
+            <code className="px-1.5 py-0.5 rounded bg-gray-100 dark:bg-gray-800 text-sm font-mono">
+              {children}
+            </code>
+          ),
+        }}
+      >
+        {content}
+      </ReactMarkdown>
+    </div>
+  </div>
+</div>
   );
 }

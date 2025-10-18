@@ -3,12 +3,15 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { ChatMessage } from "./chat-message";
 import { Message } from "@/types/chat";
 import { useEffect, useRef } from "react";
+import { Badge } from "../ui/badge";
+import { ChatLoader } from "./chat-loader";
 
 interface ChatViewProps {
   messages: Message[];
+  isLoading: boolean
 }
 
-export function ChatView({ messages }: ChatViewProps) {
+export function ChatView({ messages, isLoading }: ChatViewProps) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -27,12 +30,15 @@ export function ChatView({ messages }: ChatViewProps) {
         <div className="flex-1 py-5 overflow-hidden shadow-md font-bold text-center text-2xl">
           Chat Mode
         </div>
-        {messages.map((message) => (
+        {messages.map((message, index) => (
           <ChatMessage
-            key={message.id}
+            key={index}
             message={message}
           />
         ))}
+        {isLoading &&
+          <ChatLoader/>
+        }
         <div ref={messagesEndRef} />
       </ScrollArea>
     </>

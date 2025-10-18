@@ -8,6 +8,7 @@ import React, { createContext, useContext, useState, ReactNode } from "react";
 
 interface ChatContextType {
     messages: Message[];
+    isLoading: boolean;
     createChat: (query: string) => Promise<string>;
     sendMessage: (chatId: string, text: string) => Promise<void>;
     fetchMessages: () => Promise<MessageShorthand[]>;
@@ -25,6 +26,7 @@ export const useChat = () => {
 export const ChatProvider = ({ children }: { children: ReactNode }) => {
     const [messages, setMessages] = useState<Message[]>([]);
     const [firstText, setFirstText] = useState<undefined | string>(undefined)
+    const [isLoading, setIsLoading] = useState<boolean>(false)
     const createChat = async (query: string): Promise<string> => {
         setFirstText(query)
         setMessages([])
@@ -40,15 +42,22 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     };
 
     const sendMessage = async (chatId: string, text: string): Promise<void> => {
+        setIsLoading(true)
         setFirstText(undefined)
         const userData: Message = { id: uuidv4(), content: text, role: 'user', timestamp: 12 }
         setMessages(prev => [...prev, userData]);
-        const res = await axiosInstance.post('/chat/stream', {
-            session_id: chatId,
-            content: text
-        })
-        const formattedData: Message = { ...res.data, id: res.data._id }
-        setMessages(prev => [...prev, formattedData]);
+        try{
+            const res = await axiosInstance.post('/chat/stream', {
+                session_id: chatId,
+                content: text
+            })
+            const formattedData: Message = { ...res.data, id: res.data._id }
+            setMessages(prev => [...prev, formattedData]);
+        }catch(e){
+            console.log(e)
+        }finally{
+            setIsLoading(false)
+        }
     };
     const fetchMessagesById = async (chatId: string): Promise<void> => {
         const res = await axiosInstance.get(`/chat/history/${chatId}`)
@@ -63,7 +72,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
 
     return (
         <ChatContext.Provider
-            value={{ messages, createChat, sendMessage, fetchMessages, fetchMessagesById, firstText }}
+            value={{ messages,isLoading, createChat, sendMessage, fetchMessages, fetchMessagesById, firstText }}
         >
             {children}
         </ChatContext.Provider>

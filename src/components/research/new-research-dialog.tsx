@@ -21,21 +21,17 @@ import axiosInstance from "@/lib/axios"
 interface NewResearchDialogProps {
     open: boolean
     onOpenChange: (open: boolean) => void
-    onSubmit: (data: { name: string; description: string; file: string }) => Promise<void>
+    onSubmit: (data: { name: string; description: string; file: string }) => void
 }
 
 export function NewResearchDialog({ open, onOpenChange, onSubmit }: NewResearchDialogProps) {
     const [name, setName] = useState("")
     const [description, setDescription] = useState("")
     const [file, setFile] = useState<string>("")
-    const [fileName, setFileName] = useState<string>("")
-    const [isFileUploadLoading, setIsFileUploadLoading] = useState<boolean>(false)
-    const [isLoading, setIsLoading] = useState<boolean>(false)
-    const handleSubmit = async(e: React.FormEvent) => {
+
+    const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
-        setIsLoading(true)
-        await onSubmit({ name, description, file })
-        setIsLoading(false)
+        onSubmit({ name, description, file })
         setName("")
         setDescription("")
         setFile("")
@@ -45,24 +41,15 @@ export function NewResearchDialog({ open, onOpenChange, onSubmit }: NewResearchD
     const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const selectedFile = e.target.files?.[0]
         if (!selectedFile) return;
-        setIsFileUploadLoading(true)
-        setFileName(selectedFile.name)
         const formData = new FormData()
         formData.append('file', selectedFile)
-        try{
-
-            const response = await axiosInstance.post('/research/upload-pdf', formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                }
+        const response = await axiosInstance.post('/research/upload-pdf', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
             }
+        }
         )
         setFile(response.data.url)
-        }catch(e){
-            console.log(e)
-        }finally{
-            setIsFileUploadLoading(false)
-        }
     }
 
     return (
@@ -104,17 +91,15 @@ export function NewResearchDialog({ open, onOpenChange, onSubmit }: NewResearchD
                                     onChange={handleFileChange}
                                     accept=".pdf,.doc,.docx,.txt"
                                     className="hidden"
-                                    disabled={isFileUploadLoading}
                                 />
                                 <Button
-                                    disabled={isFileUploadLoading}
                                     type="button"
                                     variant="outline"
                                     onClick={() => document.getElementById("article")?.click()}
                                     className="w-full justify-start gap-2"
                                 >
                                     <Upload className="h-4 w-4" />
-                                    {file ? fileName : "Choose file"}
+                                    {/* {files ? file.name : "Choose file"} */}
                                 </Button>
                             </div>
                             <p className="text-xs text-muted-foreground">Supported formats: PDF, DOC, DOCX, TXT</p>
@@ -124,7 +109,7 @@ export function NewResearchDialog({ open, onOpenChange, onSubmit }: NewResearchD
                         <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
                             Cancel
                         </Button>
-                        <Button type="submit" disabled={isLoading}>Create Research</Button>
+                        <Button type="submit">Create Research</Button>
                     </DialogFooter>
                 </form>
             </DialogContent>

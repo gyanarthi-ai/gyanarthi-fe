@@ -26,6 +26,7 @@ export default function WritingAssistant() {
     const researchId = params.researchId as string;
     const [queryInput, setQueryInput] = useState("")
     const [generatedParagpaphh, setGeneratedParagraph] = useState("")
+    const [isSaving, setIsSaving] = useState<boolean>(false)
     useEffect(() => {
         if (!researchId) return;
         console.log(researchId)

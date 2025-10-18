@@ -50,7 +50,7 @@ export function ResearchCard({ id, title, description, date, status }: ResearchC
                     <div className="flex-1">
                         <h3 className="font-medium text-sm leading-tight mb-1">{title}</h3>
                         <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(status)}`}>
-                            on-going
+                            {status}
                         </span>
                     </div>
                     <DropdownMenu>

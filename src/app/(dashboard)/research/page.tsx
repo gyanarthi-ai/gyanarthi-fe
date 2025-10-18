@@ -21,12 +21,14 @@ export default function Dashboard() {
         const response = await axiosInstance.post('/research', {
             description: data.description,
             title: data.name,
-            pdf_url: data.file
+            pdf_url: data.file,
+            date: new Date().toISOString().split('T')[0]
         })
         setResearches([response.data.research, ...researches])
     }
     const handleGetResearh = async () => {
         const response = await axiosInstance.get('/research')
+        console.log(response.data)
         setResearches(response.data)
     }
 
@@ -62,9 +64,9 @@ export default function Dashboard() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {researches.map((research) => (
+                    {researches.map((research, index) => (
                         <ResearchCard
-                            key={research.id}
+                            key={index}
                             id={research.id}
                             title={research.title}
                             description={research.description}

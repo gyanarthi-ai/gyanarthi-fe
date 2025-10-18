@@ -16,12 +16,11 @@ const LoginPage = () => {
         e.preventDefault();
         setIsLoading(true);
         try {
-
             await axiosInstance.post(`/auth/login`, {
                 email,
                 password
             })
-            router.push('/dashboard')
+            router.push('/chat')
         } catch (e) {
             toast('Error Loggin In')
             console.log(e)

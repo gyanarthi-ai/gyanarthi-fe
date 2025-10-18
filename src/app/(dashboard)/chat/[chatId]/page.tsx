@@ -8,7 +8,7 @@ import { useEffect, useRef } from "react";
 
 export default function ChatPage() {
     const { chatId } = useParams<{ chatId: string }>()
-    const { messages, sendMessage, fetchMessagesById, firstText } = useChat()
+    const { messages, sendMessage, fetchMessagesById, firstText, isLoading } = useChat()
 
     const ranRef = useRef(false)
 
@@ -34,6 +34,7 @@ export default function ChatPage() {
                 <div className="flex h-full flex-1 flex-col">
                     <ChatView
                         messages={messages}
+                        isLoading={isLoading}
                     />
                     <div className="border-t p-4">
                         <div className="mx-auto max-w-3xl">
