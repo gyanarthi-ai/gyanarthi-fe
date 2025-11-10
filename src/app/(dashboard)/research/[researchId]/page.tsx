@@ -1,5 +1,5 @@
 "use client";
-
+import "froala-editor/js/plugins/font_family.min.js";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,6 +14,7 @@ import { LoadingStates, useResearch } from "@/context/ResearchContext";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import html2pdf from "html2pdf.js";
+import { IArticleFormat } from "@/types/chat";
 
 export default function WritingAssistant() {
   const {
@@ -24,12 +25,15 @@ export default function WritingAssistant() {
     reviewResearch,
     generateParagraph,
     loadingStates,
+    generateArticle,
   } = useResearch();
   const params = useParams();
   const researchId = params.researchId as string;
   const [queryInput, setQueryInput] = useState("");
+  const [generateArticleInput, setGenerateArticleInput] = useState("");
   const [generatedParagpaphh, setGeneratedParagraph] = useState("");
-  const [isSaving, setIsSaving] = useState<boolean>(false);
+  const [isGenerating, setIsGenerating] = useState<boolean>(false);
+  const [selectedFormat, setSelectFormat] = useState<IArticleFormat>("IEEE");
   useEffect(() => {
     if (!researchId) return;
     console.log(researchId);
@@ -37,8 +41,33 @@ export default function WritingAssistant() {
   }, [researchId]);
 
   const generateParagraphButton = async () => {
-    const value = await generateParagraph(queryInput);
-    setGeneratedParagraph(value);
+    setIsGenerating(true);
+    try {
+      const value = await generateParagraph(queryInput);
+      setGeneratedParagraph(value);
+    } catch (e) {
+      toast.error("Failed to generate paragraph");
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+  const generateArticleButton = async () => {
+    setIsGenerating(true);
+    try {
+      const value: string = await generateArticle(
+        generateArticleInput,
+        selectedFormat,
+      );
+      setResearch({
+        ...research,
+        title: research?.title ? research.title : "",
+        content: value,
+      });
+    } catch (e) {
+      toast.error("Failed to generate article");
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   if (!research) {
@@ -190,8 +219,9 @@ export default function WritingAssistant() {
                   <div className="w-full">
                     <Label>Enter Prompt:</Label>
                     <Input
+                      disabled={isGenerating}
                       placeholder="Enter a small conclusion paragraph"
-                      value={queryInput}
+                      value={isGenerating ? "Loading..." : queryInput}
                       onChange={(e) => setQueryInput(e.target.value)}
                     />
                   </div>
@@ -202,6 +232,47 @@ export default function WritingAssistant() {
                   >
                     <Send />
                   </Button>
+                </div>
+                <div className="flex w-full flex-col gap-2">
+                  <div className="w-full">
+                    Generate Full Article:
+                    <p>Note: This will add directly to the article</p>
+                  </div>
+                  <div className="w-full">
+                    Select Format:
+                    <select
+                      defaultValue={"IEEE"}
+                      onChange={(e) =>
+                        setSelectFormat(e.target.value as IArticleFormat)
+                      }
+                    >
+                      <option value="IEEE">IEEE</option>
+                      <option value="APA">APA</option>
+                      <option value="MLA">MLA</option>
+                    </select>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div className="w-full">
+                      <Label>Enter Prompt:</Label>
+                      <Input
+                        disabled={isGenerating}
+                        placeholder="Enter a prompt"
+                        value={
+                          isGenerating ? "Loading..." : generateArticleInput
+                        }
+                        onChange={(e) =>
+                          setGenerateArticleInput(e.target.value)
+                        }
+                      />
+                    </div>
+                    <Button
+                      variant={"ghost"}
+                      className="mt-4"
+                      onClick={() => generateArticleButton()}
+                    >
+                      <Send />
+                    </Button>
+                  </div>
                 </div>
               </div>
             </TabsContent>
